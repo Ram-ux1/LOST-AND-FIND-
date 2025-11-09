@@ -14,12 +14,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export function Header() {
   return (
-    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 z-50">
-      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 z-50 shadow-sm">
+      <div className="flex items-center">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
@@ -27,10 +26,17 @@ export function Header() {
           <Logo className="h-6 w-6 text-primary" />
           <span className="sr-only">FindMyStuff</span>
         </Link>
-        <MainNav />
-      </nav>
+      </div>
+
+      <div className="flex-1 flex justify-center">
+        <div className="hidden md:flex">
+         <MainNav />
+        </div>
+      </div>
+      
       <MobileNav />
-      <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
+
+      <div className="flex items-center gap-2">
         <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -1,3 +1,5 @@
+import { PlaceHolderImages } from "./placeholder-images";
+
 export type Item = {
   id: string;
   name: string;
@@ -41,7 +43,7 @@ export const items: Item[] = [
     description: 'A classic bifold wallet, slightly worn. Contained a library card and some cash. Lost near the main library.',
     category: 'Wallets',
     status: 'lost',
-    imageUrl: 'https://picsum.photos/seed/wallet/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'wallet')?.imageUrl || 'https://picsum.photos/seed/wallet/400/300',
     imageHint: 'leather wallet',
     location: 'Main Library',
     date: '2024-07-15',
@@ -53,7 +55,7 @@ export const items: Item[] = [
     description: 'A set of three keys on a blue lanyard with a small keychain toy. Found on a bench in the central park.',
     category: 'Keys',
     status: 'found',
-    imageUrl: 'https://picsum.photos/seed/keys/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'keys')?.imageUrl || 'https://picsum.photos/seed/keys/400/300',
     imageHint: 'house keys',
     location: 'Central Park',
     date: '2024-07-18',
@@ -65,7 +67,7 @@ export const items: Item[] = [
     description: 'Black iPhone 13 with a small crack on the top left corner of the screen. In a clear case. Lost in the student union building.',
     category: 'Electronics',
     status: 'lost',
-    imageUrl: 'https://picsum.photos/seed/phone/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'phone')?.imageUrl || 'https://picsum.photos/seed/phone/400/300',
     imageHint: 'smartphone cracked',
     location: 'Student Union',
     date: '2024-07-20',
@@ -77,7 +79,7 @@ export const items: Item[] = [
     description: 'A simple grey Jansport backpack. A water bottle was in the side pocket and it felt heavy. Found in lecture hall 3B.',
     category: 'Bags',
     status: 'found',
-    imageUrl: 'https://picsum.photos/seed/backpack/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'backpack')?.imageUrl || 'https://picsum.photos/seed/backpack/400/300',
     imageHint: 'grey backpack',
     location: 'Lecture Hall 3B',
     date: '2024-07-21',
@@ -89,7 +91,7 @@ export const items: Item[] = [
     description: 'White wireless earbuds in a white charging case. Brand name is visible. Lost on the city bus, route 5.',
     category: 'Electronics',
     status: 'lost',
-    imageUrl: 'https://picsum.photos/seed/headphones/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'headphones')?.imageUrl || 'https://picsum.photos/seed/headphones/400/300',
     imageHint: 'wireless headphones',
     location: 'City Bus Route 5',
     date: '2024-07-19',
@@ -101,7 +103,7 @@ export const items: Item[] = [
     description: '13-inch silver laptop with a circular sticker on the lid. Found in the coffee shop downtown.',
     category: 'Electronics',
     status: 'found',
-    imageUrl: 'https://picsum.photos/seed/laptop/400/300',
+    imageUrl: PlaceHolderImages.find(p => p.id === 'laptop')?.imageUrl || 'https://picsum.photos/seed/laptop/400/300',
     imageHint: 'silver laptop',
     location: 'Downtown Coffee Shop',
     date: '2024-07-22',

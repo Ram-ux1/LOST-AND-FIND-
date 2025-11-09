@@ -4,6 +4,7 @@ import Link from "next/link"
 import { items } from "@/lib/data"
 import { ItemCard } from "@/components/item-card"
 import { Button } from "@/components/ui/button"
+import { PlaceHolderImages } from "@/lib/placeholder-images"
 
 export default function Home() {
   const recentLostItems = items
@@ -13,17 +14,22 @@ export default function Home() {
     .filter((item) => item.status === "found")
     .slice(0, 5)
 
+  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero');
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         <section className="relative w-full h-[60vh] flex items-center justify-center text-center">
-          <Image
-            src="https://picsum.photos/seed/hero/1200/800"
-            alt="Collection of lost and found items"
-            data-ai-hint="lost found"
-            fill
-            className="object-cover object-center brightness-50"
-          />
+          {heroImage && (
+            <Image
+              src={heroImage.imageUrl}
+              alt={heroImage.description}
+              data-ai-hint={heroImage.imageHint}
+              fill
+              className="object-cover object-center brightness-50"
+              priority
+            />
+          )}
           <div className="relative z-10 p-4 space-y-4 text-primary-foreground">
             <h1 className="text-4xl font-headline tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
               Find What's Lost, Reunite What's Found

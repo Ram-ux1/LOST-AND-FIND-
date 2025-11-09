@@ -21,16 +21,16 @@ type ItemCardProps = {
 
 export function ItemCard({ item }: ItemCardProps) {
   return (
-    <Card className="flex flex-col overflow-hidden h-full">
+    <Card className="flex flex-col overflow-hidden h-full group transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <CardHeader className="p-0">
         <Link href={`/items/${item.id}`} className="block">
-          <div className="aspect-video relative">
+          <div className="aspect-video relative overflow-hidden">
             <Image
               src={item.imageUrl}
               alt={item.name}
               data-ai-hint={item.imageHint}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
              <Badge variant={item.status === 'lost' ? 'destructive' : 'secondary'} className="capitalize shrink-0 absolute top-2 right-2">
               {item.status}
