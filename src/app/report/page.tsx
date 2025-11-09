@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { ImageUploader } from "@/components/image-uploader"
-import { Button } from "@/componentsü/button"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,

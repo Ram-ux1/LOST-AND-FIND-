@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/componentsü/input"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function SignupPage() {
