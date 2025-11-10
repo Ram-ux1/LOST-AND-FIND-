@@ -1,18 +1,37 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
-
-import { items } from "@/lib/data"
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase"
+import type { Item } from "@/lib/data"
 import { ItemCard } from "@/components/item-card"
 import { Button } from "@/components/ui/button"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
+import { collection, query, where, limit } from "firebase/firestore"
 
 export default function Home() {
-  const recentLostItems = items
-    .filter((item) => item.status === "lost")
-    .slice(0, 5)
-  const recentFoundItems = items
-    .filter((item) => item.status === "found")
-    .slice(0, 5)
+  const firestore = useFirestore()
+
+  const recentLostItemsQuery = useMemoFirebase(() => {
+    if (!firestore) return null
+    return query(
+      collection(firestore, "items"),
+      where("status", "==", "lost"),
+      limit(5)
+    )
+  }, [firestore])
+  
+  const recentFoundItemsQuery = useMemoFirebase(() => {
+    if (!firestore) return null
+    return query(
+      collection(firestore, "items"),
+      where("status", "==", "found"),
+      limit(5)
+    )
+  }, [firestore])
+
+  const { data: recentLostItems } = useCollection<Item>(recentLostItemsQuery)
+  const { data: recentFoundItems } = useCollection<Item>(recentFoundItemsQuery)
 
   const heroImage = PlaceHolderImages.find((img) => img.id === 'hero');
 
@@ -54,7 +73,7 @@ export default function Home() {
               Recently Lost
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {recentLostItems.map((item) => (
+              {recentLostItems && recentLostItems.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>
@@ -72,7 +91,7 @@ export default function Home() {
               Recently Found
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {recentFoundItems.map((item) => (
+              {recentFoundItems && recentFoundItems.map((item) => (
                 <ItemCard key={item.id} item={item} />
               ))}
             </div>

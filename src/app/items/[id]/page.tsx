@@ -1,16 +1,15 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Tag, MapPin, Search, Bot } from "lucide-react"
 
-import { items } from "@/lib/data"
+import type { Item, Claim } from "@/lib/data"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import {
   Dialog,
@@ -24,9 +23,82 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { useDoc, useFirestore, useUser, useMemoFirebase, addDocumentNonBlocking } from "@/firebase"
+import { doc, collection } from "firebase/firestore"
+import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
 
 export default function ItemDetailPage({ params }: { params: { id: string } }) {
-  const item = items.find((i) => i.id === params.id)
+  const firestore = useFirestore()
+  const { user } = useUser()
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const itemRef = useMemoFirebase(() => {
+    if (!firestore || !params.id) return null
+    return doc(firestore, "items", params.id)
+  }, [firestore, params.id])
+
+  const { data: item, isLoading } = useDoc<Item>(itemRef)
+  const [claimDetails, setClaimDetails] = useState("")
+
+  const handleSubmitClaim = async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Not Logged In",
+        description: "You must be logged in to submit a claim.",
+      });
+      return;
+    }
+    if (!item) {
+      toast({
+        variant: "destructive",
+        title: "Item not found",
+        description: "Cannot submit a claim for a non-existent item.",
+      });
+      return;
+    }
+
+    if(user.uid === item.userId) {
+       toast({
+        variant: "destructive",
+        title: "Cannot Claim Own Item",
+        description: "You cannot submit a claim for an item you posted.",
+      });
+      return;
+    }
+
+    const claimsColRef = collection(firestore, 'users', item.userId, 'items', item.id, 'claims');
+    const newClaim: Omit<Claim, 'id'> = {
+      itemId: item.id,
+      itemName: item.name,
+      claimerId: user.uid,
+      claimantName: user.displayName || "Anonymous",
+      ownerId: item.userId,
+      status: 'pending',
+      claimDate: new Date().toISOString(),
+    };
+    
+    await addDocumentNonBlocking(claimsColRef, newClaim);
+    
+    toast({
+      title: "Claim Submitted",
+      description: "Your claim has been submitted for review.",
+    });
+
+    router.push(`/items`);
+  };
+
+
+  if (isLoading) {
+    return (
+      <div className="container py-24 text-center">
+        <h1 className="text-2xl font-bold">Loading...</h1>
+      </div>
+    )
+  }
 
   if (!item) {
     return (
@@ -104,7 +176,7 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
           <div className="flex flex-col sm:flex-row gap-2">
             <Dialog>
               <DialogTrigger asChild>
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" disabled={!user || user.uid === item.userId}>
                   Claim This Item
                 </Button>
               </DialogTrigger>
@@ -127,11 +199,13 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
                       id="claim-details"
                       placeholder="e.g., 'The wallet has a scratch on the front logo', 'The phone background is a picture of a cat.'"
                       className="min-h-32"
+                      value={claimDetails}
+                      onChange={(e) => setClaimDetails(e.target.value)}
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full" onClick={handleSubmitClaim}>
                     Submit Claim
                   </Button>
                 </DialogFooter>

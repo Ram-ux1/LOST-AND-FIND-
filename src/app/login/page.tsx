@@ -1,4 +1,10 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth, initiateEmailSignIn, initiateAnonymousSignIn } from "@/firebase"
+import { useToast } from "@/hooks/use-toast"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +18,31 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const auth = useAuth()
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    initiateEmailSignIn(auth, email, password)
+    toast({
+      title: "Logging In...",
+      description: "You will be redirected shortly.",
+    })
+    router.push("/")
+  }
+  
+  const handleGuestLogin = () => {
+    initiateAnonymousSignIn(auth)
+    toast({
+      title: "Logging In as Guest...",
+      description: "You will be redirected shortly.",
+    })
+    router.push("/")
+  }
+
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] py-12">
       <Card className="mx-auto max-w-sm">
@@ -22,7 +53,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <form onSubmit={handleLogin} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -30,6 +61,8 @@ export default function LoginPage() {
                 type="email"
                 placeholder="m@example.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -42,15 +75,21 @@ export default function LoginPage() {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
             <Button type="submit" className="w-full">
               Login
             </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
+          </form>
+           <Button variant="outline" className="w-full mt-4" onClick={handleGuestLogin}>
+              Continue as Guest
             </Button>
-          </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="underline">

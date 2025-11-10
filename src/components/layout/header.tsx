@@ -1,5 +1,7 @@
+"use client"
+
 import Link from "next/link"
-import { CircleUser, Menu, Package2 } from "lucide-react"
+import { CircleUser, Menu } from "lucide-react"
 
 import { MainNav } from "@/components/layout/main-nav"
 import { MobileNav } from "@/components/layout/mobile-nav"
@@ -14,8 +16,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useUser, useAuth } from "@/firebase"
+import { signOut } from "firebase/auth"
 
 export function Header() {
+  const { user, isUserLoading } = useUser()
+  const auth = useAuth()
+
+  const handleLogout = () => {
+    signOut(auth)
+  }
+
   return (
     <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 z-50 shadow-sm">
       <div className="flex items-center">
@@ -53,12 +64,20 @@ export function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-                <Link href="/login">Login</Link>
-            </DropdownMenuItem>
-             <DropdownMenuItem asChild>
-                <Link href="/signup">Sign Up</Link>
-            </DropdownMenuItem>
+            {isUserLoading ? (
+              <DropdownMenuItem>Loading...</DropdownMenuItem>
+            ) : user ? (
+               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            ) : (
+              <>
+                <DropdownMenuItem asChild>
+                    <Link href="/login">Login</Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                    <Link href="/signup">Sign Up</Link>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
